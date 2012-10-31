@@ -19,3 +19,4 @@ doc/
 
 # testing database
 spec/testing.db
+./db/test.db
