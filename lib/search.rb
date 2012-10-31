@@ -35,7 +35,7 @@ class Search
 		if most_recent.nil? || (Time.now - most_recent > 600)
 			PostContainer.from_url(@url)
 		else
-			PostContainer.from_db(@db, @term)
+			PostContainer.from_db(@term, @db)
 		end
 	end
 end
