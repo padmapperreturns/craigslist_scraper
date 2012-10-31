@@ -1,4 +1,5 @@
 require 'search'
+require 'DBFaker'
 require 'sqlite3'
 
 describe "Search" do
@@ -13,25 +14,20 @@ describe "Search" do
 	end
 
 	describe "database stuff" do
+		include DBFaker
 		before :each do
-			@db = SQLite3::Database.new "spec/testing.db"
-			make_schema = <<EOF
-CREATE TABLE IF NOT EXISTS searches (
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-link VARCHAR NOT NULL,
-term VARCHAR NOT NULL,
-created_at VARCHAR NOT NULL,
-updated_at VARCHAR NOT NULL
-);
-EOF
-			@db.execute(make_schema)
-			@db.execute("insert into searches (link, term, created_at, updated_at) values ('joe', 'bob', 'something', 'else');")
-			#system("sqlite3 spec/testing.db < db/schema.sql")
+      create_db_faker
+      @db.execute("insert into searches (term, time, url) values ('soma', '1 Jan 2000', 'http://example.com');")
+		end
+
+		after :each do
+	    drop_table_db_faker
 		end
 
 		it "loads previous searches from the database" do
 
 			db_searches = @db.execute("select * from searches")
+			p db_searches
 			db_searches.should be_an Array
 			db_searches.first.should be_an Array
 
