@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+
+require './lib/post.rb'
+require './lib/post_container.rb'
+require './lib/search.rb'
+require 'sqlite3'
+
+db = SQLite3::Database.new ("./db/production.db")
+system("sqlite3 ./db/production.db < ./db/schema.sql")
+
+Search.from_database(db)
+
+Search.new ({url: "http://sfbay.craigslist.org/search/apa?query=soma&srchType=A&minAsk=&maxAsk=&bedrooms=",
+						term: "soma", db: db})
+
+
+email = "BEST VIEWED AT MNIMUM 1920x1080\n"
+email += "---JOE---KARI---MIKE---REED---\n"
+Search.kids.each do |s|
+	email += "-"*150 + "\n"
+	email += s.url + "\n"
+	email += "-"*150 + "\n\n"
+
+	pc = s.fetch_results
+	pc.each do |post|
+		email += "    " + post.posting_title + " " + post.location + " " + post.listing_price.to_s + "\n"
+		email += "    " + post.url + "\n\n"
+	end
+end
+
+puts email.inspect
+
+system "echo #{email.inspect} | mail jesse@devbootcamp.com"
+
+Search.to_database(db)

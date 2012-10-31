@@ -11,6 +11,7 @@ class Post
     p.posting_title = attr_array[0][2]
     p.listing_price = attr_array[0][3]
     p.location = attr_array[0][4]
+    p.url = attr_array[0][5]
     p.term = attr_array[0][6]
     p
   end

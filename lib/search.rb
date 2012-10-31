@@ -14,9 +14,16 @@ class Search
 		end
 
 		def from_database(db)
-			searches = db.execute("select * from searches")
+			searches = db.execute("select * from searches;")
 			searches.map do |search|
-				Search.new(term: search[1], time: search[2], url: search[3])
+				Search.new(term: search[1], time: search[2], url: search[3], db: db)
+			end
+		end
+
+		def to_database(db)
+			db.execute("delete from searches;")
+			kids.each do |search|
+				db.execute("insert into searches (term, time, url) values ('#{search.term}', '#{search.time}', '#{search.url}');")
 			end
 		end
 	end
@@ -24,7 +31,7 @@ class Search
 	attr_reader :url, :time, :term, :db
 	def initialize(args)
 		@url = args[:url]
-		@time = args[:time]
+		@time = (args[:time] ? Time.parse(args[:time]) : (Time.now - 999999))
 		@term = args[:term]
 		@db = args[:db]
 	end
@@ -33,9 +40,19 @@ class Search
 		same_terms = (self.class.kids - [self]).select { |s| s.time && s.term == @term }
 		most_recent = same_terms.map(&:time).max
 		if most_recent.nil? || (Time.now - most_recent > 600)
-			PostContainer.from_url(@url)
+			pc = PostContainer.from_url(@url)
+
+			begin
+				pc.each {|p| p.save_to_db(@term, db)}
+				true
+			rescue
+				false
+			end
+
+			@time = Time.now
+			pc
 		else
-			PostContainer.from_db(@term, @db)
+			PostContainer.from_db(@term, db)
 		end
 	end
 end
