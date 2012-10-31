@@ -2,7 +2,7 @@ require 'nokogiri'
 require 'open-uri'
 
 class Post
-  attr_accessor :date_time, :posting_title, :listing_price, :location, :url
+  attr_accessor :date_time, :posting_title, :listing_price, :location, :url, :term
 
   def self.from_db(post_id, db)
     attr_array = db.execute("SELECT * FROM posts WHERE id = #{post_id};")
@@ -11,6 +11,7 @@ class Post
     p.posting_title = attr_array[0][2]
     p.listing_price = attr_array[0][3]
     p.location = attr_array[0][4]
+    p.term = attr_array[0][6]
     p
   end
 
@@ -46,14 +47,15 @@ class Post
     @doc.xpath("//h2").first.content.match(/\((.*)\)/).to_a.last || "earth"
   end
 
-  def save_to_db(db)
+  def save_to_db(term, db)
     db.execute("INSERT INTO posts
-    (date_time, posting_title, listing_price, location, url)
+    (date_time, posting_title, listing_price, location, url, term)
     VALUES ('#{date_time}',
     '#{posting_title}',
     '#{listing_price}',
     '#{location}',
-    '#{url}');"
+    '#{url}',
+    '#{term}');"
     )
   end
 end

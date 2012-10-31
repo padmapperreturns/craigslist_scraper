@@ -55,6 +55,10 @@ describe Post do
       @post.listing_price.should == 1594
     end
 
+    it "loads its term" do
+      @post.term.should == "term"
+    end
+
     after(:all) do
       drop_table_db_faker
     end
@@ -78,7 +82,7 @@ describe Post do
 
     it "should set a price of 0 if the listing has no price" do
       post = Post.from_url("./spec/no_price.html")
-      post.save_to_db(@db)
+      post.save_to_db("soma", @db)
       @db.execute("SELECT listing_price FROM posts WHERE listing_price = 0;").should_not be_nil
     end
 
