@@ -5,7 +5,13 @@ require './lib/post.rb'
 class PostContainer < Array
 
   def self.from_db(term, db)
+    pc = PostContainer.new
+    post_ids = db.execute("SELECT id FROM posts WHERE term = '#{term}';")
+    post_ids.flatten.each do |id|
+      pc << Post.from_db(id, db)
+    end
 
+    pc
   end
 
   def self.from_url(url)
@@ -22,8 +28,6 @@ class PostContainer < Array
     Nokogiri::HTML(open(url))
   end
 
-  # an array of links to individual posts, iterate over them creating new posts, shoveling into self
-
   def self.scraped_links
     posts = @doc.css('span.itemsep+a')
     links = []
@@ -33,5 +37,4 @@ class PostContainer < Array
 
     links
   end
-
 end
