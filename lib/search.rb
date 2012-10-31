@@ -16,7 +16,7 @@ class Search
 		def from_database(db)
 			searches = db.execute("select * from searches")
 			searches.map do |search|
-				Search.new(term: search[0], time: search[1], url: search[2])
+				Search.new(term: search[1], time: search[2], url: search[3])
 			end
 		end
 	end

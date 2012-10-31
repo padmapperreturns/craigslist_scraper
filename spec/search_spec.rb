@@ -19,13 +19,13 @@ describe "Search" do
 CREATE TABLE IF NOT EXISTS searches (
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 link VARCHAR NOT NULL,
-search_term VARCHAR NOT NULL,
+term VARCHAR NOT NULL,
 created_at VARCHAR NOT NULL,
 updated_at VARCHAR NOT NULL
 );
 EOF
 			@db.execute(make_schema)
-			@db.execute("insert into searches (link, search_term, created_at, updated_at) values ('joe', 'bob', 'something', 'else');")
+			@db.execute("insert into searches (link, term, created_at, updated_at) values ('joe', 'bob', 'something', 'else');")
 			#system("sqlite3 spec/testing.db < db/schema.sql")
 		end
 
