@@ -43,5 +43,9 @@ describe PostContainer do
     it "should contain a post that matches the term" do
       @pc[0].term.should == "term"
     end
+
+    after(:all) do
+      drop_table_db_faker
+    end
   end
 end
